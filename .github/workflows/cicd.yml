@@ -74,11 +74,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Construire image 
+      - name: Construire image
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USER }}/tpdeploiment:${{ github.sha }} .
 
-      - name: Ajouter tag 
+      - name: Ajouter tag latest
         run: |
           docker tag \
             ${{ secrets.DOCKERHUB_USER }}/tpdeploiment:${{ github.sha }} \
@@ -109,7 +109,7 @@ jobs:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
-          sudo sshpass -p "$SSH_PASSWORD" ssh \
+          sshpass -p "$SSH_PASSWORD" ssh \
             -o StrictHostKeyChecking=no \
             "$SSH_USER@$SSH_IP" "
               cd /home/ubuntu/mra/tpdeploiment
@@ -125,9 +125,18 @@ jobs:
                 $DOCKERHUB_USER/tpdeploiment:latest
             "
 
-      - name: Verifier le deploiement
+      - name: Verifier le deploiement sur la VM
         env:
+          SSH_USER: ${{ secrets.SSH_USER }}
           SSH_IP: ${{ secrets.SSH_IP }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
           sleep 10
-          sudo curl --fail http://127.0.0.1:8080
+
+          sshpass -p "$SSH_PASSWORD" ssh \
+            -o StrictHostKeyChecking=no \
+            "$SSH_USER@$SSH_IP" "
+              sudo docker ps
+
+              curl --fail http://127.0.0.1:8087/health
+            "
