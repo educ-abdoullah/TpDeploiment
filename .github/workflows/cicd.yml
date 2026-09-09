@@ -26,7 +26,6 @@ jobs:
       - name: Lancer les tests unitaires
         run: |
           python -m pytest Tests/test_unitaire.py -v
-          
 
 
   e2e-tests:
@@ -56,3 +55,36 @@ jobs:
       - name: Lancer les tests E2E
         run: |
           python -m pytest Tests/test_e2e.py -v
+
+
+  build-push:
+    runs-on: ubuntu-latest
+
+    needs:
+      - unit-tests
+      - e2e-tests
+
+    steps:
+      - name: Recuperer le code
+        uses: actions/checkout@v4
+
+      - name: Connexion Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Construire image 
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USER }}/tpdeploiment:${{ github.sha }} .
+
+      - name: Ajouter tag 
+        run: |
+          docker tag \
+            ${{ secrets.DOCKERHUB_USER }}/tpdeploiment:${{ github.sha }} \
+            ${{ secrets.DOCKERHUB_USER }}/tpdeploiment:latest
+
+      - name: Push image Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USER }}/tpdeploiment:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/tpdeploiment:latest
