@@ -130,4 +130,4 @@ jobs:
           SSH_IP: ${{ secrets.SSH_IP }}
         run: |
           sleep 10
-          sudo curl --fail http://$SSH_IP:8087/health
+          sudo curl --fail http://127.0.0.1:8080
