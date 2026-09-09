@@ -121,7 +121,7 @@ jobs:
               docker run -d \
                 --name myapp \
                 --restart unless-stopped \
-                -p 8080:8080 \
+                -p 8087:8080 \
                 $DOCKERHUB_USER/tpdeploiment:latest
             "
 
@@ -130,4 +130,4 @@ jobs:
           SSH_IP: ${{ secrets.SSH_IP }}
         run: |
           sleep 10
-          curl --fail http://$SSH_IP:8080/health
+          curl --fail http://$SSH_IP:8087/health
