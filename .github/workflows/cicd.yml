@@ -116,10 +116,10 @@ jobs:
 
               docker pull $DOCKERHUB_USER/tpdeploiment:latest
 
-              docker rm -f myapp || true
+              docker rm -f mra-app || true
 
               docker run -d \
-                --name myapp \
+                --name mra-app \
                 --restart unless-stopped \
                 -p 8087:8080 \
                 $DOCKERHUB_USER/tpdeploiment:latest
