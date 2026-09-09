@@ -25,7 +25,8 @@ jobs:
 
       - name: Lancer les tests unitaires
         run: |
-          python -m pytest tests/test_unitaire.py -v
+          python -m pytest Tests/test_unitaire.py -v
+          
 
 
   e2e-tests:
@@ -54,4 +55,4 @@ jobs:
 
       - name: Lancer les tests E2E
         run: |
-          python -m pytest tests/test_e2e.py -v
+          python -m pytest Tests/test_e2e.py -v
